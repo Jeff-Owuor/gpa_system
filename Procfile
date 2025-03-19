@@ -1,1 +1,1 @@
-web: gunicorn gpaSystem.wsgi --log-file -
+web: gunicorn gpaSystem.wsgi --bind 0.0.0.0:$PORT --chdir GPA_SYSTEM
