@@ -1,1 +1,1 @@
-web: gunicorn gpa_system.wsgi --log-file -
+web: gunicorn gpaSystem.wsgi --log-file -
