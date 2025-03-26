@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from datetime import timedelta
-
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -87,14 +87,16 @@ WSGI_APPLICATION = 'gpaSystem.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'apt2080',
-        'USER': 'paulineapondi',
-        'PASSWORD': '1989',
-        'HOST': '127.0.0.1',  # or use the server IP
-        'PORT': '5432',
-    }
+    #'default': {
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'apt2080',
+        # 'USER': 'paulineapondi',
+        # 'PASSWORD': '1989',
+        # 'HOST': '127.0.0.1',  # or use the server IP
+        # 'PORT': '5432',
+    #}
+    "default": dj_database_url.config(default="postgres://paulineapondi:1989@127.0.0.1:5432/apt2080")
+    
 }
 
 
