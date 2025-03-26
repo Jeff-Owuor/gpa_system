@@ -86,19 +86,21 @@ WSGI_APPLICATION = 'gpaSystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    #'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'apt2080',
-        # 'USER': 'paulineapondi',
-        # 'PASSWORD': '1989',
-        # 'HOST': '127.0.0.1',  # or use the server IP
-        # 'PORT': '5432',
-    #}
-    "default": dj_database_url.config(default="postgres://paulineapondi:1989@127.0.0.1:5432/apt2080")
-    
+DATABASES = {    
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_4hLGRqnP1OVI',
+        'HOST': 'ep-summer-mountain-a898g8ra-pooler.eastus2.azure.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require'  # ✅ Use 'require' instead of 'required'
+        }
+    }    
 }
-
+if isinstance(DATABASES["default"], str):
+    DATABASES["default"] = dj_database_url.parse(DATABASES["default"])
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
