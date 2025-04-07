@@ -182,4 +182,4 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apiKey","name":"Authorization","in":"header"},
     }
 }
-AUTH_USER_MODEL = 'gpa.CustomUser'
+AUTH_USER_MODEL = "gpa.CustomUser"

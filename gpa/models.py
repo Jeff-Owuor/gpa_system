@@ -33,20 +33,33 @@ class CustomUser(AbstractUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+class Major(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     student_number = models.CharField(max_length=20, unique=True)
+    major = models.ForeignKey(Major, on_delete=models.SET_NULL, null=True, blank=True)
+    cumulative_gpa = models.DecimalField(max_digits=4, decimal_places=2, default=0.0)
+    total_credit_hours = models.IntegerField(default=0)
+
 
 class Course(models.Model):
     course_code = models.CharField(max_length=10, unique=True)
     course_name = models.CharField(max_length=100)
     credit_hours = models.IntegerField()
+    major = models.ForeignKey(Major, on_delete=models.CASCADE)
 
 class Enrollment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester = models.CharField(max_length=20)
     year = models.IntegerField()
+    projected_grade = models.CharField(max_length=2, blank=True, null=True)
+    actual_grade = models.CharField(max_length=2, blank=True, null=True)
 
 class Assessment(models.Model):
     QUIZ = 'Quiz'
@@ -54,17 +67,23 @@ class Assessment(models.Model):
     ATTENDANCE = 'Attendance'
     MIDTERM = 'Midterm'
     FINAL = 'Final Exam'
-    ASSESSMENT_TYPES = [(QUIZ, 'Quiz'), (ASSIGNMENT, 'Assignment'), (ATTENDANCE, 'Attendance'), (MIDTERM, 'Midterm'), (FINAL, 'Final Exam')]
-    
+    ASSESSMENT_TYPES = [
+        (QUIZ, 'Quiz'),
+        (ASSIGNMENT, 'Assignment'),
+        (ATTENDANCE, 'Attendance'),
+        (MIDTERM, 'Midterm'),
+        (FINAL, 'Final Exam')
+    ]
+
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     assessment_type = models.CharField(max_length=20, choices=ASSESSMENT_TYPES)
-    weight = models.DecimalField(max_digits=4, decimal_places=2)
-    total_marks = models.IntegerField()
+    weight = models.DecimalField(max_digits=5, decimal_places=2)  # e.g. 20.00 for 20%
+    total_marks = models.DecimalField(max_digits=6, decimal_places=2)  # e.g. out of 20 or 100
 
 class Score(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    marks_obtained = models.DecimalField(max_digits=5, decimal_places=2)
+    marks_obtained = models.DecimalField(max_digits=6, decimal_places=2)
 
 class GradeScale(models.Model):
     letter_grade = models.CharField(max_length=2)
@@ -75,6 +94,7 @@ class GradeScale(models.Model):
 class Projection(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    current_gpa = models.DecimalField(max_digits=3, decimal_places=2)
-    desired_grade = models.CharField(max_length=2)
-    required_final_exam_score = models.DecimalField(max_digits=5, decimal_places=2)
+    current_gpa = models.DecimalField(max_digits=4, decimal_places=2)
+    desired_gpa = models.DecimalField(max_digits=4, decimal_places=2)
+    required_final_exam_score = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    is_on_track = models.BooleanField(default=True)

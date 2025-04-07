@@ -5,7 +5,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.routers import DefaultRouter
-from gpa.views import CustomUserViewSet, StudentViewSet, CourseViewSet, EnrollmentViewSet, AssessmentViewSet, ScoreViewSet, GradeScaleViewSet, ProjectionViewSet
+from gpa.views import StudentViewSet, CourseViewSet, EnrollmentViewSet, AssessmentViewSet, ScoreViewSet, GradeScaleViewSet, ProjectionViewSet, MajorListView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -18,7 +18,6 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register(r'users', CustomUserViewSet)
 router.register(r'students', StudentViewSet)
 router.register(r'courses', CourseViewSet)
 router.register(r'enrollments', EnrollmentViewSet)
@@ -26,6 +25,7 @@ router.register(r'assessments', AssessmentViewSet)
 router.register(r'scores', ScoreViewSet)
 router.register(r'grade-scales', GradeScaleViewSet)
 router.register(r'projections', ProjectionViewSet)
+router.register(r'majors', MajorListView)
 
 
 urlpatterns = [
