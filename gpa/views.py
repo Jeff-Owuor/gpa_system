@@ -1,22 +1,37 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from .models import CustomUser, Student, Course, Enrollment, Assessment, Score, GradeScale, Projection
+from rest_framework import viewsets,generics
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from .models import CustomUser, Student, Course, Enrollment, Assessment, Score, GradeScale, Projection,Major
 from .serializers import (
     CustomUserSerializer, StudentSerializer, CourseSerializer, EnrollmentSerializer, 
-    AssessmentSerializer, ScoreSerializer, GradeScaleSerializer, ProjectionSerializer
+    AssessmentSerializer, ScoreSerializer, GradeScaleSerializer, ProjectionSerializer,MajorSerializer
 )
-
+from rest_framework.views import APIView
+from django.db import transaction
 # User ViewSet
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    @transaction.atomic
+    def post(self, request):
+        user_serializer = CustomUserSerializer(data=request.data)
+        if user_serializer.is_valid():
+            user = user_serializer.save()
+            Student.objects.create(user=user, student_number=f"STD-{user.id}")
+            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# -------------------------------
+# ViewSets for Models
+# -------------------------------
+class StudentViewSet(viewsets.ModelViewSet):
+    serializer_class = StudentSerializer
+    queryset = Student.objects.all()
     permission_classes = [IsAuthenticated]
 
-# Student ViewSet
-class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Student.objects.filter(user=self.request.user)
+
 
 # Course ViewSet
 class CourseViewSet(viewsets.ModelViewSet):
@@ -53,3 +68,7 @@ class ProjectionViewSet(viewsets.ModelViewSet):
     queryset = Projection.objects.all()
     serializer_class = ProjectionSerializer
     permission_classes = [IsAuthenticated]
+
+class MajorListView(viewsets.ModelViewSet):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
