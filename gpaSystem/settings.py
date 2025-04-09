@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    
+     'corsheaders',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -183,3 +184,9 @@ SWAGGER_SETTINGS = {
     }
 }
 AUTH_USER_MODEL = "gpa.CustomUser"
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    # Add other origins if needed
+]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
