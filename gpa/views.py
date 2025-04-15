@@ -15,8 +15,7 @@ class RegisterView(APIView):
     def post(self, request):
         user_serializer = CustomUserSerializer(data=request.data)
         if user_serializer.is_valid():
-            user = user_serializer.save()
-            Student.objects.create(user=user, student_number=f"STD-{user.id}")
+            user_serializer.save()
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -24,23 +23,17 @@ class RegisterView(APIView):
 # -------------------------------
 # ViewSets for Models
 # -------------------------------
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     viewsets.GenericViewSet):
     serializer_class = StudentSerializer
-    queryset = Student.objects.all()
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Ensure students only access their own records
         return Student.objects.filter(user=self.request.user)
 
-    def get_serializer_context(self):
-        # Pass request context to serializer
-        return {'request': self.request}
-
-    def perform_create(self, serializer):
-        # Automatically assign logged-in user as the student user
-        serializer.save(user=self.request.user)
-
+    def get_object(self):
+        return Student.objects.get(user=self.request.user)
 
 # Course ViewSet
 class CourseViewSet(viewsets.ModelViewSet):

@@ -26,11 +26,14 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
-    def create(self, validated_data):
-        request = self.context.get('request')
-        validated_data['user'] = request.user
-        return super().create(validated_data)
+        read_only_fields = ('user',)
 
+    def update(self, instance, validated_data):
+        # Let student update their own info
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
