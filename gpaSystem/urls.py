@@ -18,7 +18,7 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register(r'students', StudentViewSet)
+router.register(r'students', StudentViewSet,basename='student')
 router.register(r'courses', CourseViewSet)
 router.register(r'enrollments', EnrollmentViewSet)
 router.register(r'assessments', AssessmentViewSet)
