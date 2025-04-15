@@ -1,4 +1,5 @@
 from rest_framework import viewsets,generics,mixins
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import CustomUser, Student, Course, Enrollment, Assessment, Score, GradeScale, Projection,Major
 from .serializers import (
