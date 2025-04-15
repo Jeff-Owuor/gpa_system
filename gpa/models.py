@@ -56,10 +56,6 @@ class Course(models.Model):
 class Enrollment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    semester = models.CharField(max_length=20)
-    year = models.IntegerField()
-    projected_grade = models.CharField(max_length=2, blank=True, null=True)
-    actual_grade = models.CharField(max_length=2, blank=True, null=True)
 
 class Assessment(models.Model):
     QUIZ = 'Quiz'
