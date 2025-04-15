@@ -45,8 +45,6 @@ class Student(models.Model):
     major = models.ForeignKey(Major, on_delete=models.SET_NULL, null=True, blank=True)
     cumulative_gpa = models.DecimalField(max_digits=4, decimal_places=2, default=0.0)
     total_credit_hours = models.IntegerField(default=0)
-
-
 class Course(models.Model):
     course_code = models.CharField(max_length=10, unique=True)
     course_name = models.CharField(max_length=100)

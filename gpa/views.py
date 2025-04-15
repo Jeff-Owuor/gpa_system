@@ -30,7 +30,16 @@ class StudentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        # Ensure students only access their own records
         return Student.objects.filter(user=self.request.user)
+
+    def get_serializer_context(self):
+        # Pass request context to serializer
+        return {'request': self.request}
+
+    def perform_create(self, serializer):
+        # Automatically assign logged-in user as the student user
+        serializer.save(user=self.request.user)
 
 
 # Course ViewSet
