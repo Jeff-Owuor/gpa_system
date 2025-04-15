@@ -27,13 +27,21 @@ class StudentViewSet(mixins.RetrieveModelMixin,
                      mixins.UpdateModelMixin,
                      viewsets.GenericViewSet):
     serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Student.objects.filter(user=self.request.user)
+        return Student.objects.all()
 
-    def get_object(self):
-        return Student.objects.get(user=self.request.user)
+    @action(detail=False, methods=['get', 'patch'], url_path='me')
+    def me(self, request):
+        student = request.user.student
+        if request.method == 'GET':
+            serializer = self.get_serializer(student)
+            return Response(serializer.data)
+        elif request.method == 'PATCH':
+            serializer = self.get_serializer(student, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
 # Course ViewSet
 class CourseViewSet(viewsets.ModelViewSet):
