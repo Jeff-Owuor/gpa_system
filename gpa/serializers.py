@@ -45,9 +45,10 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AssessmentSerializer(serializers.ModelSerializer):
+    assessment_type_display = serializers.CharField(source='get_assessment_type_display', read_only=True)
     class Meta:
         model = Assessment
-        fields = '__all__'
+        fields = ['id', 'course', 'assessment_type', 'assessment_type_display', 'weight', 'total_marks']
 
 class ScoreSerializer(serializers.ModelSerializer):
     class Meta:

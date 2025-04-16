@@ -63,6 +63,12 @@ class AssessmentViewSet(viewsets.ModelViewSet):
     serializer_class = AssessmentSerializer
     permission_classes = [IsAuthenticated]
 
+class AssessmentTypeChoices(APIView):
+    def get(self, request):
+        return Response([
+            {"value": choice[0], "label": choice[1]} for choice in Assessment.ASSESSMENT_TYPES
+        ])
+
 # Score ViewSet
 class ScoreViewSet(viewsets.ModelViewSet):
     queryset = Score.objects.all()
