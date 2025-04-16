@@ -60,9 +60,31 @@ class GradeScaleSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProjectionSerializer(serializers.ModelSerializer):
+    projected_cumulative_gpa = serializers.DecimalField(
+        max_digits=4, decimal_places=2, read_only=True
+    )
+
     class Meta:
         model = Projection
-        fields = '__all__'
+        fields = [
+            'id', 'student', 'semester', 'desired_semester_gpa', 'total_credit_hours',
+            'required_average_final_exam_score', 'projected_cumulative_gpa', 'is_on_track'
+        ]
+        read_only_fields = ['projected_cumulative_gpa', 'is_on_track']
+
+    def create(self, validated_data):
+        projection = Projection.objects.create(**validated_data)
+        projection.projected_cumulative_gpa = projection.calculate_projected_cumulative_gpa()
+        projection.save()
+        return projection
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.projected_cumulative_gpa = instance.calculate_projected_cumulative_gpa()
+        instance.save()
+        return instance
+
 class MajorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Major

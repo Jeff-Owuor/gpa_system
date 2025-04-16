@@ -87,8 +87,25 @@ class GradeScale(models.Model):
 
 class Projection(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    current_gpa = models.DecimalField(max_digits=4, decimal_places=2)
-    desired_gpa = models.DecimalField(max_digits=4, decimal_places=2)
-    required_final_exam_score = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    semester = models.CharField(max_length=20)  # e.g. "Spring 2025"
+    desired_semester_gpa = models.DecimalField(max_digits=4, decimal_places=2)
+    total_credit_hours = models.PositiveIntegerField(help_text="Total credit hours for the semester")
+    required_average_final_exam_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    projected_cumulative_gpa = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     is_on_track = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.student.user.email} - {self.semester} Projection"
+
+    def calculate_projected_cumulative_gpa(self):
+        starting_gpa = self.student.cumulative_gpa
+        completed_hours = self.student.total_credit_hours
+
+        old_quality_points = starting_gpa * completed_hours
+        new_quality_points = self.desired_semester_gpa * self.total_credit_hours
+        total_hours = completed_hours + self.total_credit_hours
+
+        if total_hours == 0:
+            return 0.0
+
+        return round((old_quality_points + new_quality_points) / total_hours, 2)
