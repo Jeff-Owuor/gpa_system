@@ -79,7 +79,11 @@ class GradeScaleViewSet(viewsets.ModelViewSet):
 class ProjectionViewSet(viewsets.ModelViewSet):
     queryset = Projection.objects.all()
     serializer_class = ProjectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        student = self.request.user.student  # Assumes logged-in user is a Student
+        serializer.save(student=student)
 
 class MajorListView(viewsets.ModelViewSet):
     queryset = Major.objects.all()
